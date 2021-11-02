@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProviderServices\AppointmentController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -29,12 +30,10 @@ Route::post('/contact-us', [ContactController::class,'contactus']);
 
 Route::post('/products/post-cart', [CartController::class,'postCart'])->name('post-cart');
 Route::get('/products', [ProductsHomeController::class,'index']);
-Route::get('/products/cart', [CartController::class,'index']);
+Route::get('/products/cart', [CartController::class,'cart']);
 Route::get('/products/add-to-cart/{id}', [CartController::class,'addToCart'])->name('add-to-cart');
 Route::get('/products/remove-from-cart/{id}', [CartController::class,'removeFromCart'])->name('remove-from-cart');
 Route::get('/products/{slug}', [ProductsHomeController::class,'details'])->name("product.details");
-
-
 
 
 
@@ -60,7 +59,8 @@ Route::prefix("admin")->middleware(['auth','role:admin'])->group(function(){
 
     Route::resource("static-page",StaticPageController::class);
     Route::get("static-page/{id}/delete",[StaticPageController::class,'destroy'])->name("static-page.delete");
-
+    Route::resource("customer-details",CustomerDetailsController::class);
+    Route::get("customer-details/{id}/delete",[CustomerDetailsController::class,'destroy'])->name ("customer-details.delete");
     Route::resource("customer",CustomerController::class);
     Route::get("customer/{id}/delete",[CustomerController::class,'destroy'])->name("customer.delete");
 
@@ -86,4 +86,10 @@ Route::prefix("admin")->middleware(['auth','role:admin'])->group(function(){
     Route::resource("customer-details",CustomerDetailsController::class);
     Route::get("customer-details/{id}/delete",[CustomerDetailsController::class,'destroy'])->name ("customer-details.delete");
 
+});
+
+Route::group(['middleware'=>['auth','role:provider services'],'prefix'=>'provider'],function(){
+    Route::get("/",[PatientHomeController::class,"index"])->name('home');
+    Route::resource("appointment",AppointmentController::class);
+ //   Route::resource("user-appointment",PatientAppointmentController::class);
 });

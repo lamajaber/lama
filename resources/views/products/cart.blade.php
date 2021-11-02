@@ -4,108 +4,125 @@
 
 @section("css")
 
+    <!-- Google fonts - Roboto-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700">
+
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="{{asset('tamkeen-proj/css/style.default.css')}}" id="theme-stylesheet">
-    <!--linear icon css-->
-    <link rel="stylesheet" href="{{asset('tamkeen-proj/assets/css/linearicons.css')}}">
+    <link rel="stylesheet" href="{{asset('universal-theme/css/style.default.css')}}" id="theme-stylesheet">
+    <style>
+        .text-muted.lead {
+            margin-bottom: 20px;
+        }
+        .row {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+    </style>
 @endsection
 
-@section('content')
 
-    <div class="container py-5">
-        <!-- For demo purpose -->
-        <div class="row mb-9">
-            <div class="col-lg-8 mx-auto text-center">
-                <h1 class="display-6">نموذج الدفع <h1>
-            </div>
-        </div> <!-- End -->
-        <div class="row">
-            <div class="col-lg-6 mx-auto">
-                <div class="card ">
-                    <div class="card-header">
-                        <div class="bg-white shadow-sm pt-4 pl-2 pr-2 pb-2">
-                            <!-- Credit card form tabs -->
-                            <ul role="tablist" class="nav bg-light nav-pills rounded nav-fill mb-3">
-                                <li class="nav-item"> <a data-toggle="pill" href="#credit-card" class="nav-link active "> <i class="fa fa-credit-card" aria-hidden="true"></i> بطاقة الائتمان </a> </li>
-                                <li class="nav-item"> <a data-toggle="pill" href="#paypal" class="nav-link "> <i class="fa fa-paypal" aria-hidden="true"></i>
-                                        باي بال </a> </li>
-                                <li class="nav-item"> <a data-toggle="pill" href="#net-banking" class="nav-link "> <i class="fa fa-mobile" aria-hidden="true"></i>
-                                        الدفع  البنكي  </a> </li>
-                            </ul>
-                        </div> <!-- End -->
-                        <!-- Credit card form content -->
-                        <div class="tab-content">
-                            <!-- credit card info-->
-                            <div id="credit-card" class="tab-pane fade show active pt-3">
-                                <form role="form" onsubmit="event.preventDefault()">
-                                    <div class="form-group"> <label for="username">
-                                            <h6>صاحب بطاقة</h6>
-                                        </label> <input type="text" name="username" placeholder="اسم صاحب البطاقة
+@section("content")
 
-" required class="form-control "> </div>
-                                    <div class="form-group"> <label for="cardNumber">
-                                            <h6>رقم البطاقة</h6>
-                                        </label>
-                                        <div class="input-group"> <input type="text" name="cardNumber" placeholder="رقم البطاقة الصالح
 
-" class="form-control " required>
-                                            <div class="input-group-append"> <span class="input-group-text text-muted"> <i class="fa fa-cc-visa" aria-hidden="true"></i>
- <i class="fa fa-cc-mastercard" aria-hidden="true"></i>
-<i class="fa fa-cc-amex" aria-hidden="true"></i>
- </span> </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-8">
-                                            <div class="form-group"> <label><span class="hidden-xs">
-                                                    <h6>تاريخ الانتهاء</h6>
-                                                </span></label>
-                                                <div class="input-group"> <input type="number" placeholder="شهر  " name="" class="form-control" required> <input type="number" placeholder="سنة
-" name="" class="form-control" required> </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4">
-                                            <div class="form-group mb-4"> <label data-toggle="tooltip" title="Three digit CV code on the back of your card">
-                                                    <h6>CVV <i class="fa fa-question-circle d-inline"></i></h6>
-                                                </label> <input type="text" required class="form-control"> </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-footer"> <button type="button" class="subscribe btn btn-primary btn-block shadow-sm"> تاكيد الدفع</button>
-                                </form>
+    <div class="row bar mt-5">
+        <div class="col-lg-9">
+
+            <p class="text-muted lead text-right">سلة المشتريات</p>
+            @include("layouts.shared.msg")
+            <div class="box mt-0 pb-0 no-horizontal-padding">
+                <form method="post" action="{{route('post-cart')}}">
+                    @csrf
+                    <?php
+                    $cartItems = json_decode(request()->cookie('cart'),true)??[];
+                    ?>
+                    <?php $total = 0 ?>
+                    @if(count($cartItems))
+                        <div class="table-responsive">
+
+                            <table class="table text-right"  >
+                                <thead>
+                                <tr>
+                                    <th colspan="2">المنتج</th>
+                                    <th>الكمية</th>
+                                    <th>سعر الوحدة</th>
+                                    <th colspan="2">المجموع</th>
+                                </tr>
+                                </thead>
+                                @foreach($cartItems as $productId=>$quantity)
+                                    <?php $product = \App\Models\Product::find($productId);
+                                    $price = $product->sale_price??$product->regular_price;
+                                    $total+=$price *$quantity;
+                                    ?>
+                                    <tr>
+                                        <td><a href="{{route('product.details',$product->slug) }}"><img src='{{asset("storage/assets/img/{$product->main_image}")}}' alt="White Blouse Armani"
+                                                                                                        class="img-fluid"></a></td>
+                                        <td><a href="{{route('product.details',$product->slug) }}">{{$product->title}}</a></td>
+                                        <td>
+                                            <input type='hidden' name='id[]' value='{{$product->id}}' />
+                                            <input name='quantity[]' type="number" value="{{$quantity}}" class="form-control">
+                                        </td>
+                                        <td>${{$price}}</td>
+                                        <td>${{$price*$quantity}}</td>
+                                        <td><a href="{{route('remove-from-cart',$productId)}}" onclick='return confirm("هل أنت متأكد؟")'><i class="fa fa-trash-o"></i></a></td>
+                                    </tr>
+                                @endforeach
+                                <tfoot>
+                                <tr>
+                                    <th colspan="5" class="text-center">المجموع</th>
+                                    <th colspan="2">${{$total}}</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="box-footer d-flex justify-content-between align-items-center">
+
+                            <div class="left-col">
+                                <button type="submit" value='1' name='refresh' class="btn btn-secondary"><i class="fa fa-refresh"></i> حدث السلة</button>
+                                <button name='checkout' value='1' class="btn btn-template-outlined">شراء <i
+                                        class="fa fa-chevron-right"></i></button>
                             </div>
-                        </div> <!-- End -->
-                        <!-- Paypal info -->
-                        <div id="paypal" class="tab-pane fade pt-3">
-                            <h6 class="pb-2">حدد نوع حساب باي بال  الخاص بك</h6>
-                            <div class="form-group "> <label class="radio-inline"> <input type="radio" name="optradio" checked>محلي </label> <label class="radio-inline"> <input type="radio" name="optradio" class="ml-5">عالمي</label></div>
-                            <p> <button type="button" class="btn btn-primary "><i class="fab fa-paypal mr-2"></i> تسجيل الدخول إلى باي بال الخاص بي</button> </p>
-                            <p class="text-muted"> ملاحظة: بعد الضغط على الزر ، سيتم توجيهك إلى بوابة آمنة للدفع. بعد الانتهاء من عملية الدفع ، ستتم إعادة توجيهك مرة أخرى إلى موقع الويب لعرض تفاصيل طلبك. </p>
-                        </div> <!-- End -->
-                        <!-- bank transfer info -->
-                        <div id="net-banking" class="tab-pane fade pt-3">
-                            <div class="form-group "> <label for="Select Your Bank">
-                                    <h6>اختر البنك الذي تتعامل معه</h6>
-                                </label> <select class="form-control" id="ccmonth">
-                                    <option value="" selected disabled>--اختر البنك الذي تتعامل معه--</option>
-                                    <option>بنك1</option>
-                                    <option>بنك 2</option>
-                                    <option>بنك 3</option>
-                                    <option>بنك4</option>
-                                    <option>بنك 5</option>
-                                    <option>بنك 6</option>
-                                    <option>بنك7</option>
-                                    <option>بنك9</option>
-                                    <option>بنك 10</option>
-                                </select> </div>
-                            <div class="form-group">
-                                <p> <button type="button" class="btn btn-primary "><i class="fas fa-mobile-alt mr-2"></i> متابعة الدفع</button> </p>
-                            </div>
-                            <p class="text-muted">ملاحظة: بعد الضغط على الزر ، سيتم توجيهك إلى بوابة آمنة للدفع. بعد الانتهاء من عملية الدفع ، ستتم إعادة توجيهك مرة أخرى إلى موقع الويب لعرض تفاصيل طلبك. </p>
-                        </div> <!-- End -->
-                        <!-- End -->
-                    </div>
-                </div>
+                            <div class="right-col"><a href="shop-category.html" class="btn btn-secondary mt-0"><i
+                                        class="fa fa-chevron-left"></i> اكمل التسوق</a></div>
+                        </div>
+                    @else
+                        <div class='alert alert-warning'> لا يوجد منتجات في السلة</div>
+                    @endif
+                </form>
             </div>
         </div>
-@endsection
+        <div class="col-lg-3 mt-5">
+            <div id="order-summary" class="box mt-0 mb-4 p-0">
+                <div class="box-header mt-0 text-right">
+                    <h3>الطلبات</h3>
+                </div>
+                <p class="text-muted text-right">تم حساب تكاليف الشحن بناءا على القيم التي ادخلتها</p>
+                <div class="table-responsive">
+                    <table class="table text-right">
+                        <tbody>
+                        <tr>
+                            <td>مجموع الطلبات</td>
+                            <th>${{$total}}</th>
+                        </tr>
+                        <tr>
+                            <td>الضريبة</td>
+                            <th>$0.00</th>
+                        </tr>
+                        <tr class="total">
+                            <td>المجموع</td>
+                            <th>${{$total}}</th>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
+        </div>
+
+
+
+    </div>
+
+
+
+
+@endsection

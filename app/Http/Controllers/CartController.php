@@ -81,10 +81,10 @@ class CartController extends Controller
                 //inform all users we have new order
                 $adminRole = Role::findByName('admin');
                 $users = $adminRole->users;
-                InformNewOrder::dispatch($users);
+               // InformNewOrder::dispatch($users);
                 //Mail::to(auth()->user()->email)->send(new MailOrderDetails($order));
 
-                Mail::to(auth()->user()->email)->send(new OrderShipped($order));
+             //   Mail::to(auth()->user()->email)->send(new OrderShipped($order));
 
                 //event(new \App\Events\OrderCreated(auth()->user()->name));
                 /*************PUSH NOTIFICATION USING PUSHER************ */
@@ -92,15 +92,7 @@ class CartController extends Controller
                     'cluster' => env('PUSHER_APP_CLUSTER'),
                     'encrypted' => true
                 );
-                $pusher = new Pusher(
-                    env('PUSHER_APP_KEY'),
-                    env('PUSHER_APP_SECRET'),
-                    env('PUSHER_APP_ID'),
-                    $options
-                );
-                $data['message'] = auth()->user()->name;
-                $pusher->trigger('order-created', 'App\\Events\\OrderCreated', $data);
-                /*************************************************** */
+
 
                 session()->flash('msg','s: تمت اضافة الطلبية بنجاح سيتم التواصل معك');
                 return redirect('products/cart');
@@ -115,14 +107,7 @@ class CartController extends Controller
             'cluster' => env('PUSHER_APP_CLUSTER'),
             'encrypted' => true
         );
-        $pusher = new Pusher(
-            env('PUSHER_APP_KEY'),
-            env('PUSHER_APP_SECRET'),
-            env('PUSHER_APP_ID'),
-            $options
-        );
-        $data['message'] = auth()->user();
-        $pusher->trigger('order-created', 'App\\Events\\OrderCreated', $data);
+
         return view('products.cart');
     }
     public function addToCart($id)

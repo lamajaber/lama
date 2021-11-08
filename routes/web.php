@@ -18,7 +18,7 @@ use App\Http\Controllers\GuzzleExampleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController as FrontHomeController;
 use App\Http\Controllers\ProductsController as ProductsHomeController;
-
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\CustomerDetailsController;
 
 
@@ -27,7 +27,7 @@ Route::get('/services', [FrontHomeController::class,'services']);
 Route::get('/services/{slug}', [FrontHomeController::class,'serviceDetails']);
 Route::get('/contact-us', [ContactController::class,'contact']);
 Route::post('/contact-us', [ContactController::class,'contactus']);
-
+Route::get('/about-us', [AboutController::class,'index']);
 Route::post('/products/post-cart', [CartController::class,'postCart'])->name('post-cart');
 Route::get('/products', [ProductsHomeController::class,'index']);
 Route::get('/products/cart', [CartController::class,'cart']);
@@ -89,7 +89,8 @@ Route::prefix("admin")->middleware(['auth','role:admin'])->group(function(){
 });
 
 Route::group(['middleware'=>['auth','role:provider services'],'prefix'=>'provider'],function(){
-    Route::get("/",[PatientHomeController::class,"index"])->name('home');
+   
+    Route::get("/",[AppointmentController::class,'index'])->name("provider");
     Route::resource("appointment",AppointmentController::class);
  //   Route::resource("user-appointment",PatientAppointmentController::class);
 });

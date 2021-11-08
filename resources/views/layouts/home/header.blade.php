@@ -13,7 +13,7 @@
                     <a class="nav-link" href="{{asset('/')}}">الرئيسية </a>
                 </li>
                 <li class="nav-item @yield('pageActive')">
-                    <a class="nav-link" href="{{asset('/page/about-us')}}"> عن الشركة </a>
+                    <a class="nav-link" href="{{asset('about-us')}}"> عن الشركة </a>
                 </li>
                 <li class="nav-item @yield('servicesActive')">
                     <a class="nav-link" href="{{asset('services')}}"> خدماتنا </a>

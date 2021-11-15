@@ -20,7 +20,7 @@ use App\Http\Controllers\HomeController as FrontHomeController;
 use App\Http\Controllers\ProductsController as ProductsHomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Admin\CustomerDetailsController;
-
+use App\Http\Controllers\Admin\ProviderController;
 
 Route::get('/', [FrontHomeController::class,'index']);
 Route::get('/services', [FrontHomeController::class,'services']);
@@ -85,6 +85,7 @@ Route::prefix("admin")->middleware(['auth','role:admin'])->group(function(){
 
     Route::resource("customer-details",CustomerDetailsController::class);
     Route::get("customer-details/{id}/delete",[CustomerDetailsController::class,'destroy'])->name ("customer-details.delete");
+    Route::resource("provider",ProviderController::class);
 
 });
 

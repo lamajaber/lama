@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 use App\Models\Order;
-use App\Models\OrderDetails;
+use App\Models\OrdersDetails;
 use App\Models\Product;
 use App\Jobs\InformNewOrder;
 use Spatie\Permission\Models\Role;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Mail;
 
 use Pusher\Pusher;
 
-class CartController extends Controller
+class CartsController extends Controller
 {
     public function index()
     {
@@ -50,7 +50,7 @@ class CartController extends Controller
                 }
                 $user = auth()->user();
                 $order = Order::create([
-                    'customer_id'=>$user->id,
+                  'customer_id'=>$user->id,
                     'order_status_id'=>1,
                     'total_price'=>$totalPrice,
                     'total_items'=>count($request->id),
@@ -59,7 +59,7 @@ class CartController extends Controller
                     'email'=>$user->email,
                     'phone'=>$user->customer->phone??'',
                     'mobile'=>$user->customer->mobile??'',
-                    //'country_id'=>$user->customer->country_id??'',
+                   
                     'city'=>$user->customer->city??'',
                     'address'=>$user->customer->address??''
                 ]);
@@ -69,7 +69,7 @@ class CartController extends Controller
                     $product = Product::find($productId);
                     $price = ($product->sale_price??$product->regular_price);
                     $total = $price * $quantity;
-                    OrderDetails::create([
+                    OrdersDetails::create([
                         'order_id'=>$order->id,
                         'product_id'=>$productId,
                         'price'=>$price,
@@ -81,18 +81,13 @@ class CartController extends Controller
                 //inform all users we have new order
                 $adminRole = Role::findByName('admin');
                 $users = $adminRole->users;
-               // InformNewOrder::dispatch($users);
-                //Mail::to(auth()->user()->email)->send(new MailOrderDetails($order));
+        //  InformNewOrder::dispatch($users);
+           //   Mail::to(auth()->user()->email)->send(new MailOrderDetails($order));
 
-             //   Mail::to(auth()->user()->email)->send(new OrderShipped($order));
+        Mail::to(auth()->user()->email)->send(new OrderShipped($order));
 
-                //event(new \App\Events\OrderCreated(auth()->user()->name));
-                /*************PUSH NOTIFICATION USING PUSHER************ */
-                $options = array(
-                    'cluster' => env('PUSHER_APP_CLUSTER'),
-                    'encrypted' => true
-                );
-
+               
+               
 
                 session()->flash('msg','s: تمت اضافة الطلبية بنجاح سيتم التواصل معك');
                 return redirect('products/cart');
@@ -131,3 +126,4 @@ class CartController extends Controller
         return back();
     }
 }
+

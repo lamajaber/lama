@@ -24,7 +24,7 @@ class Order extends Model
         return $this->belongsTo(OrderStatus::class);
     }
     public function orderItems(){
-        return $this->hasMany(OrderDetalis::class,'order_id','id');
+        return $this->hasMany(OrdersDetails::class,'order_id','id');
     }
     public function country(){
         return $this->belongsTo(Country::class);

@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\UserProfileController;
 use App\Http\Controllers\Auth\ChangePasswordController;
-use App\Http\Controllers\CartController;
+use App\Http\Controllers\CartsController;
 use App\Http\Controllers\GuzzleExampleController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController as FrontHomeController;
@@ -28,11 +28,11 @@ Route::get('/services/{slug}', [FrontHomeController::class,'serviceDetails']);
 Route::get('/contact-us', [ContactController::class,'contact']);
 Route::post('/contact-us', [ContactController::class,'contactus']);
 Route::get('/about-us', [AboutController::class,'index']);
-Route::post('/products/post-cart', [CartController::class,'postCart'])->name('post-cart');
+Route::post('/products/post-cart', [CartsController::class,'postCart'])->name('post-cart');
 Route::get('/products', [ProductsHomeController::class,'index']);
-Route::get('/products/cart', [CartController::class,'cart']);
-Route::get('/products/add-to-cart/{id}', [CartController::class,'addToCart'])->name('add-to-cart');
-Route::get('/products/remove-from-cart/{id}', [CartController::class,'removeFromCart'])->name('remove-from-cart');
+Route::get('/products/cart', [CartsController::class,'cart']);
+Route::get('/products/add-to-cart/{id}', [CartsController::class,'addToCart'])->name('add-to-cart');
+Route::get('/products/remove-from-cart/{id}', [CartsController::class,'removeFromCart'])->name('remove-from-cart');
 Route::get('/products/{slug}', [ProductsHomeController::class,'details'])->name("product.details");
 
 
